@@ -124,16 +124,13 @@ public class GitHubRepositorySettingsPage extends
 							return;
 						}
 
-						// verify if the credentials supplied are correct
+						
+						monitor.worked(200);
+						
+						// verify if the credentials supplied are correct and if the task repository can be found
+						// note: github will allow you to view public issues, without a token with write-access for that repo.
+						// it will however return a 401 if you try to connect with an incorrect token included.
 						GitHubCredentials credentials = new GitHubCredentials(auth.getUserName(), auth.getPassword());
-						
-						if (!service.verifyCredentials(credentials)) {
-							setStatus(GitHubUi.createErrorStatus("Invalid credentials.  Please check your GitHub User ID and API Token.\nYou can find your API Token on your GitHub account settings page."));
-							return;	
-						}
-						monitor.worked(400);
-						
-						// verify the repo (by using credentials to request issue list)
 						service.searchIssues(user, repo, "open","", credentials);
 
 					} catch (GitHubServiceException e) {

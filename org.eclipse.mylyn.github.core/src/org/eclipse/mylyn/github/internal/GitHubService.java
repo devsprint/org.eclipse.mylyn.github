@@ -68,34 +68,6 @@ public class GitHubService {
 	}
 
 	/**
-	 * Verify that the provided credentials are correct
-	 * 
-	 * @param credentials
-	 *            - user credentials
-	 * 
-	 * @return true if and only if the credentials are correct
-	 */
-	public final boolean verifyCredentials(GitHubCredentials credentials)
-			throws GitHubServiceException {
-		PostMethod method = null;
-		boolean success = false;
-		try {
-			method = new PostMethod(API_URL_BASE + API_ISSUES_ROOT + EMAILS);
-			method.setRequestBody(getCredentials(credentials));
-			executeMethod(method);
-			success = true;
-		} catch (PermissionDeniedException e) {
-			LOG.error("Invalid credentials.", e);
-			return false;
-		} finally {
-			if (method != null) {
-				method.releaseConnection();
-			}
-		}
-		return success;
-	}
-
-	/**
 	 * Search the GitHub Issues API for a given search term
 	 * 
 	 * @param user
