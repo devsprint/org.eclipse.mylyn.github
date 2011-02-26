@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
+import org.eclipse.mylyn.commons.net.AuthenticationType;
 import org.eclipse.mylyn.tasks.core.AbstractRepositoryConnector;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITask;
@@ -126,10 +128,13 @@ public class GitHubRepositoryConnector extends AbstractRepositoryConnector {
 		try {
 			String user = buildTaskRepositoryUser(repository.getUrl());
 			String project = buildTaskRepositoryProject(repository.getUrl());
+			AuthenticationCredentials auth = repository.getCredentials(AuthenticationType.REPOSITORY);
+			GitHubCredentials credentials = new GitHubCredentials(auth.getUserName(), auth.getPassword());
+			
 			for (String status : statuses) {
 				GitHubIssues issues = service
 						.searchIssues(user, project, status,
-								query.getAttribute(GitHub.QUERY_TEXT_ATTRIBUTE));
+								query.getAttribute(GitHub.QUERY_TEXT_ATTRIBUTE), credentials);
 				for (GitHubIssue issue : issues.getIssues()) {
 					TaskData taskData = taskDataHandler.createTaskData(
 							repository, monitor, user, project, issue, true);
